@@ -1,2 +1,5 @@
 toyloader:
-	$(RISCV)/bin/riscv$(BITS)-unknown-elf-gcc -fPIC -nostdlib -o toy.elf toy.c
+	riscv64-unknown-elf-gcc -nostdlib -fPIC -t toy.lds toy.S toy.c -o toy.elf
+	riscv64-unknown-elf-objcopy -O binary --only-section .text toy.elf toy.bin
+
+
