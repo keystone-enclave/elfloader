@@ -2,7 +2,6 @@
 
 #define BIT(n) (1ul << (n))
 #define MASK(n) (BIT(n) - 1ul)
-#define IS_ALIGNED(n, b) (!((n)&MASK(b)))
 
 #if __riscv_xlen == 64
 #define RISCV_PT_INDEX_BITS 9
@@ -25,8 +24,6 @@
 
 #define ROUND_UP(n, b) (((((n)-1ul) >> (b)) + 1ul) << (b))
 #define ROUND_DOWN(n, b) (n & ~((2 << (b - 1)) - 1))
-#define PAGE_DOWN(n) ROUND_DOWN(n, RISCV_PAGE_BITS)
-#define PAGE_UP(n) ROUND_UP(n, RISCV_PAGE_BITS)
 #define MEGAPAGE_DOWN(n) ROUND_DOWN(n, RISCV_GET_LVL_PGSIZE_BITS(2))
 #define MEGAPAGE_UP(n) ROUND_UP(n, RISCV_GET_LVL_PGSIZE_BITS(2))
 
