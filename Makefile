@@ -14,6 +14,7 @@ CFLAGS = -Wall -Werror -fPIC -fno-builtin -std=c11 -g $(OPTIONS_FLAGS)
 SRCS = elf.c elf32.c elf64.c loader.c printf.c sbi.c sbi.c 
 ASM_SRCS = loader.S
 LOADER = loader
+LOADER_BIN = loader.bin
 # LINK = $(CROSS_COMPILE)ld
 LDFLAGS = -static-pie -nostdlib $(shell $(CC) --print-file-name=libgcc.a)
 
@@ -30,11 +31,13 @@ OBJ_DIR_EXISTS = obj/.exists
  
 .PHONY: all clean
 
-all: $(LOADER)
+all: $(LOADER_BIN)
 
 $(LOADER): $(ASM_OBJS) $(OBJS) 
 	$(ELF_CC) -nostdlib -t loader.lds $^ -o $@
-	$(ELF_OBJCOPY) -O binary --only-section .text $@ loader.bin
+
+$(LOADER_BIN): $(LOADER) 
+	$(ELF_OBJCOPY) -O binary --only-section .text $< loader.bin
 
 $(OBJ_DIR_EXISTS):
 	mkdir -p obj
