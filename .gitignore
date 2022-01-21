@@ -1,3 +1,8 @@
 *.elf
 *.bin
 *.o
+obj/
+loader
+loader.bin
+toy.bin
+.exists
