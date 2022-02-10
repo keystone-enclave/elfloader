@@ -5,7 +5,7 @@ _start:
   // ...
 
   // sp <- a1 + offset
-  la sp, stack_end
+  la sp, _estack
   addi t0, t0, 0xd
 
   addi sp, sp, -4
