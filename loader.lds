@@ -18,10 +18,10 @@ SECTIONS
   .stack : 
   { 
     . = ALIGN(8);
-    _sstack = .;
+    PROVIDE ( _sstack = . );
     . = . + STACK_SIZE;
     . = ALIGN(8);
-    _estack = .;
+    PROVIDE ( _estack = . );
   } /* TODO: Check that stack fits in EPM */
 
 }
