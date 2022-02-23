@@ -34,7 +34,7 @@ OBJ_DIR_EXISTS = obj/.exists
 all: $(LOADER_BIN)
 
 $(LOADER): $(ASM_OBJS) $(OBJS) 
-	$(ELF_CC) -nostdlib -t loader.lds $^ -o $@
+	$(ELF_CC) $(LDFLAGS) -t loader.lds $^ -o $@
 
 $(LOADER_BIN): $(LOADER) 
 	$(ELF_OBJCOPY) -O binary --only-section .text $< loader.bin
