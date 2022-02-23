@@ -3,7 +3,7 @@ OUTPUT_ARCH("riscv")
 ENTRY( _start )
 
 PAGE_SIZE = 0x1000; /* TODO: figure out the page size to use here */ 
-STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x8000; /* 4 pages */
+STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0100; /* 4 pages */
 
 SECTIONS
 {
@@ -20,9 +20,11 @@ SECTIONS
     */
     . = ALIGN(8);
     PROVIDE ( _sstack = . );
+    *(._sstack);
     . = . + STACK_SIZE;
     . = ALIGN(8);
     PROVIDE ( _estack = . );
+    *(._estack);
   }
 
 }
