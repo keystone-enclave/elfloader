@@ -16,7 +16,7 @@ ASM_SRCS = loader.S
 LOADER = loader
 LOADER_BIN = loader.bin
 # LINK = $(CROSS_COMPILE)ld
-LDFLAGS = -static-pie -nostdlib $(shell $(CC) --print-file-name=libgcc.a)
+LDFLAGS = -fPIC -nostdlib $(shell $(CC) --print-file-name=libgcc.a)
 
 # SDK_LIB_DIR = $(KEYSTONE_SDK_DIR)/lib
 # SDK_INCLUDE_EDGE_DIR = $(KEYSTONE_SDK_DIR)/include/edge # Why does it use the edge library? (edge calls?) 
