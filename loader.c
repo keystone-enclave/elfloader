@@ -79,3 +79,7 @@ int hello(void* i, uintptr_t dram_base) {
     print_pgtable(0, root_page_table, minRuntimeVaddr);
     return 10;
 }
+
+int test(int i) {
+  return i + 1; 
+}
