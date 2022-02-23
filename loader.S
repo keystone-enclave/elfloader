@@ -6,8 +6,8 @@ _start:
 
   // sp <- a1 + offset
   la sp, _estack
+  add sp, sp, a1
   addi t0, t0, 0xd
-
   addi sp, sp, -4
   sw   t0, 0(sp)
   lw   t1, 0(sp)
