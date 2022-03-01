@@ -35,6 +35,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "sbi.h"
+#include "string.h"
 
 // ntoa conversion buffer size, this must be big enough to hold
 // one converted numeric number including padded zeros (dynamically created on stack)

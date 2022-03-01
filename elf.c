@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <elf.h>
-#include <elf32.h>
-#include <elf64.h>
-#include <stdio.h>
-#include <string.h>
+#include "elf.h"
+#include "elf32.h"
+#include "elf64.h"
+#include "mem.h"
+#include "string.h"
 
 /* ELF header functions */
 int
