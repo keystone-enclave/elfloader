@@ -6,7 +6,8 @@
 
 #pragma once
 
-#include <elf.h>
+#include "elf.h"
+#include "mem.h"
 #include <stdint.h>
 
 /* ELF header functions */
