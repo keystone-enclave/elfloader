@@ -1,6 +1,7 @@
 #include "loader.h"
 #include "csr.h"
 #include "vm.h"
+#include "printf.h"
 
 pte root_page_table[BIT(RISCV_PT_INDEX_BITS)] __attribute__((aligned(RISCV_PAGE_SIZE)));
 pte load_l2_page_table[BIT(RISCV_PT_INDEX_BITS)] __attribute__((aligned(RISCV_PAGE_SIZE)));
