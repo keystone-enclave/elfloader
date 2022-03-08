@@ -66,3 +66,9 @@ elf64_checkSectionTable(elf_t* elf) {
 
   return 0;
 }
+
+uint32_t
+elf64_getEtype(elf_t* elf) {
+  Elf64_Ehdr* header = (Elf64_Ehdr*)elf->elfFile;
+  return header->e_type;
+}

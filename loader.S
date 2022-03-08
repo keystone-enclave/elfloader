@@ -23,10 +23,16 @@ _start:
   sw a6, 20(sp)
   sw a7, 24(sp)
 
-  // call ELF parse function 
+  // test subroutine call
   li a0, 5
   call test
 
+  // parse eapp ELF for dynamic libraries 
+  mv a0, a4 // pass eapp ELF file
+  sub a1, a5, a4 // pass eapp ELF size
+  addi sp, sp, -128 // make space for 4 * 32 char* pointers to store addresses of library names // TODO: fix magic number 32 
+  mv a2, sp
+  call find_dynamic_libraries
 
   # call hello
   # mv a0, a4

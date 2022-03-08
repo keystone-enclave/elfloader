@@ -15,3 +15,5 @@
 // method definitions
 extern int hello(void * i, uintptr_t dram_base);
 extern int loadElf(void* elf);
+extern int find_dynamic_libraries(uintptr_t eapp_elf, size_t eapp_elf_size, char **dyn_list);
+

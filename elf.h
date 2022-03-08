@@ -462,3 +462,6 @@ elf_vtopProgramHeader(elf_t* elfFile, size_t ph, uintptr_t vaddr);
  */
 int
 elf_loadFile(elf_t* elfFile, elf_addr_type_t addr_type);
+
+uint32_t
+elf_getEtype(elf_t *elf);

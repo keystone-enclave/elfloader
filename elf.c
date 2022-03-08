@@ -460,3 +460,12 @@ elf_loadFile(elf_t* elf, elf_addr_type_t addr_type) {
 
   return 1;
 }
+
+uint32_t 
+elf_getEtype(elf_t *elf) {
+  if (elf_isElf32(elf)) {
+    return elf32_getEtype(elf); 
+  } else {
+    return elf64_getEtype(elf);
+  }
+}

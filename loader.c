@@ -1,6 +1,8 @@
 #include "loader.h"
 #include "csr.h"
 #include "vm.h"
+#include "printf.h"
+#include "elf32.h"
 
 pte root_page_table[BIT(RISCV_PT_INDEX_BITS)] __attribute__((aligned(RISCV_PAGE_SIZE)));
 pte load_l2_page_table[BIT(RISCV_PT_INDEX_BITS)] __attribute__((aligned(RISCV_PAGE_SIZE)));
@@ -82,4 +84,78 @@ int hello(void* i, uintptr_t dram_base) {
 
 int test(int i) {
   return i + 1; 
+}
+
+
+int find_dynamic_libraries(uintptr_t eapp_elf, size_t eapp_elf_size, char **dyn_list) {
+  int ret = 0; 
+
+  elf_t elf_object;
+  ret = elf_newFile((void*) eapp_elf, eapp_elf_size, &elf_object);
+
+  // Parse the ELF header, check that the file is a dynamic executable (ET_EXEC or ET_DYN).
+  int16_t e_type = elf_getEtype(&elf_object);
+  if (!(e_type == ET_EXEC || e_type == ET_DYN)) {
+    ret = -1; // TODO: add more specific error 
+  }
+
+  // parse the program headers, looking for the PT_DYNAMIC one. Also remember virtual address -> file offset mappings for the PT_LOAD segments.
+  int num_phdrs = elf_getNumProgramHeaders(&elf_object);
+  for (uint32_t i = 0; i < num_phdrs; i++) {
+    
+    if (elf_getProgramHeaderType(&elf_object, i) == PT_DYNAMIC) {
+      // Once found, parse the dynamic section. Look for the DT_NEEDED and DT_STRTAB entries.
+      uintptr_t dynamic_offset = elf_getProgramHeaderOffset(&elf_object, i);
+
+      if (elf_isElf32(&elf_object)) {
+
+        size_t dyn_elem_size = sizeof(Elf32_Dyn);
+        uintptr_t dyn_entry = (uintptr_t) elf_object.elfFile + dynamic_offset; 
+      
+        uintptr_t strtab_addr;
+        uint32_t dlib_offsets[32]; // TODO: fix this use of magic number
+        uint32_t num_dlibs = 0;
+
+        do {
+          if (((Elf32_Dyn*) dyn_entry)->d_tag == DT_STRTAB) {
+            strtab_addr = ((Elf32_Dyn*) dyn_entry)->d_un.d_ptr;
+          }
+          if (((Elf32_Dyn*) dyn_entry)->d_tag == DT_NEEDED) {
+            dlib_offsets[i] = ((Elf32_Dyn*) dyn_entry)->d_un.d_val;
+            num_dlibs++;
+          }
+          dyn_entry += dyn_elem_size;
+        } while (((Elf32_Dyn*) dyn_entry)->d_tag != DT_NULL);
+
+        // Look for library names in STRTAB, and add them to dyn_list
+        for (int j = 0; j < num_dlibs; j++) {
+          *(dyn_list + j*sizeof(char)) = (char *) strtab_addr + dlib_offsets[j];
+        }
+      } else {
+        size_t dyn_elem_size = sizeof(Elf64_Dyn);
+        uintptr_t dyn_entry = (uintptr_t) elf_object.elfFile + dynamic_offset; 
+      
+        uintptr_t strtab_addr;
+        uint32_t dlib_offsets[32]; // TODO: fix this use of magic number
+        uint32_t num_dlibs = 0;
+
+        do {
+          if (((Elf64_Dyn*) dyn_entry)->d_tag == DT_STRTAB) {
+            strtab_addr = ((Elf64_Dyn*) dyn_entry)->d_un.d_ptr;
+          }
+          if (((Elf64_Dyn*) dyn_entry)->d_tag == DT_NEEDED) {
+            dlib_offsets[i] = ((Elf64_Dyn*) dyn_entry)->d_un.d_val;
+            num_dlibs++;
+          }
+          dyn_entry += dyn_elem_size;
+        } while (((Elf64_Dyn*) dyn_entry)->d_tag != DT_NULL);
+
+        // Look for library names in STRTAB, and add them to dyn_list
+        for (int j = 0; j < num_dlibs; j++) {
+          *(dyn_list + j*sizeof(char)) = (char *) strtab_addr + dlib_offsets[j];
+        }
+      }
+    }
+  }
+  return ret;
 }

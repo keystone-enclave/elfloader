@@ -151,3 +151,6 @@ static inline size_t
 elf32_getProgramHeaderAlign(elf_t* file, size_t ph) {
   return elf32_getProgramHeaderTable(file)[ph].p_align;
 }
+
+uint32_t 
+elf32_getEtype(elf_t* elf);

@@ -62,3 +62,9 @@ elf32_checkSectionTable(elf_t* elf) {
 
   return 0;
 }
+
+uint32_t 
+elf32_getEtype(elf_t* elf) {
+  Elf32_Ehdr* header = (Elf32_Ehdr*)elf->elfFile;
+  return header->e_type;
+}
