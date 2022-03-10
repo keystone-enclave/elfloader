@@ -156,6 +156,8 @@ int find_dynamic_libraries(uintptr_t eapp_elf, size_t eapp_elf_size, char **dyn_
           dyn_entry += dyn_elem_size;
         } while (((Elf64_Dyn*) dyn_entry)->d_tag != DT_NULL);
 
+
+        printf("Number of dyn libs: %i", num_dlibs);
         // Look for library names in STRTAB, and add them to dyn_list
         for (int j = 0; j < num_dlibs; j++) {
           *(dyn_list + j*sizeof(char)) = (char *) strtab_addr + dlib_offsets[j];
