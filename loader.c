@@ -86,7 +86,8 @@ int test(int i) {
   return i + 1; 
 }
 
-
+// returns list of dynamic libraries into dyn_list 
+// return value holds the number of dynamic libraries or value < 0 if error
 int find_dynamic_libraries(uintptr_t eapp_elf, size_t eapp_elf_size, char **dyn_list) {
   int ret = 0; 
 
@@ -129,7 +130,12 @@ int find_dynamic_libraries(uintptr_t eapp_elf, size_t eapp_elf_size, char **dyn_
 
         // Look for library names in STRTAB, and add them to dyn_list
         for (int j = 0; j < num_dlibs; j++) {
-          *(dyn_list + j*sizeof(char)) = (char *) strtab_addr + dlib_offsets[j];
+          *(dyn_list + j*sizeof(char*)) = (char *) strtab_addr + dlib_offsets[j];
+        }
+        ret = num_dlibs;
+        /* DEBUG ONLY */ 
+        for (int k = 0; k < num_dlibs; k++) {
+          printf("%dth dynamic library: %s", k, (char*) (dyn_list + k*sizeof(char*)));
         }
       } else {
         size_t dyn_elem_size = sizeof(Elf64_Dyn);
@@ -153,6 +159,11 @@ int find_dynamic_libraries(uintptr_t eapp_elf, size_t eapp_elf_size, char **dyn_
         // Look for library names in STRTAB, and add them to dyn_list
         for (int j = 0; j < num_dlibs; j++) {
           *(dyn_list + j*sizeof(char)) = (char *) strtab_addr + dlib_offsets[j];
+        }
+        ret = num_dlibs;
+        /* DEBUG ONLY */ 
+        for (int k = 0; k < num_dlibs; k++) {
+          printf("%dth dynamic library: %s", k, (char*) (dyn_list + k*sizeof(char*)));
         }
       }
     }
