@@ -7,7 +7,7 @@
 #include "elf.h"
 #include "elf32.h"
 #include <inttypes.h>
-#include <string.h>
+#include "string.h"
 
 /* ELF header functions */
 int

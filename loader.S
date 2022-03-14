@@ -1,3 +1,6 @@
+#define SBI_EXT_EXPERIMENTAL_KEYSTONE_ENCLAVE 0x08424b45
+#define SBI_SM_EXIT_ENCLAVE      3006
+
 .section .text
 _start:
   // a1: dram_base
@@ -23,17 +26,36 @@ _start:
   sw a6, 20(sp)
   sw a7, 24(sp)
 
-  // call ELF parse function 
-  li a0, 5
-  call test
+  # // test function
+  # li a0, 5
+  # call test
 
+  // set the free memory
+  mv a0, a5 // a1, a2 already dram_base and dram_size
+  call initializeFreeList  
 
-  # call hello
-  # mv a0, a4
-  # call hello
-  // exit enclave
-  li a7, 0x08424b45
-  li a6, 3006
+  // validate runtime  
+  blt a3, x0, exit // check that pointer is greater than zero
+  sub t0, a4, a3 
+  blt t0, x0, exit // check file size is greater than zero 
+
+  // call elf_newFile 
+  mv a0, a3 
+  mv a1, t0 
+  addi sp, sp, -12
+  mv a2, sp
+  call elf_newFile
+  
+  // call load elf 
+  mv a0, sp
+  call loadElf 
+
+  // exit if errors
+  blt a0, x0, exit
+
+exit: // exit enclave
+  li a7, SBI_EXT_EXPERIMENTAL_KEYSTONE_ENCLAVE
+  li a6, SBI_SM_EXIT_ENCLAVE
   ecall
   
 _sstack:

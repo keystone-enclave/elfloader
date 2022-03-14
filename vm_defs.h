@@ -4,9 +4,11 @@
 #define MASK(n) (BIT(n) - 1ul)
 
 #if __riscv_xlen == 64
+#define VA_BITS 39
 #define RISCV_PT_INDEX_BITS 9
 #define RISCV_PT_LEVELS 3
-#elif __riscv_xlen == 32
+#else // __riscv_xlen == 32
+#define VA_BITS 32
 #define RISCV_PT_INDEX_BITS 10
 #define RISCV_PT_LEVELS 2
 #endif
@@ -24,8 +26,12 @@
 
 #define ROUND_UP(n, b) (((((n)-1ul) >> (b)) + 1ul) << (b))
 #define ROUND_DOWN(n, b) (n & ~((2 << (b - 1)) - 1))
+#define PAGE_DOWN(n) ROUND_DOWN(n, RISCV_PAGE_BITS)
+#define PAGE_UP(n) ROUND_UP(n, RISCV_PAGE_BITS)
 #define MEGAPAGE_DOWN(n) ROUND_DOWN(n, RISCV_GET_LVL_PGSIZE_BITS(2))
 #define MEGAPAGE_UP(n) ROUND_UP(n, RISCV_GET_LVL_PGSIZE_BITS(2))
+
+#define IS_ALIGNED(x, align) (!((x) & (align - 1)))
 
 /* Starting address of the enclave memory */
 
@@ -36,7 +42,7 @@
 #define EYRIE_USER_STACK_START 0x0000000040000000
 #define EYRIE_ANON_REGION_START \
   0x0000002000000000  // Arbitrary VA to start looking for large mappings
-#elif __riscv_xlen == 32
+#else //__riscv_xlen == 32
 #define EYRIE_LOAD_START 0xf0000000
 #define EYRIE_PAGING_START 0x40000000
 #define EYRIE_UNTRUSTED_START 0x80000000

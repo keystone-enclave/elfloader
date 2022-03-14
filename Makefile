@@ -11,7 +11,7 @@ ELF_OBJCOPY = $(ELF_CROSS_COMPILE)objcopy
 # endif
 
 CFLAGS = -Wall -Werror -fPIC -fno-builtin -nostdlib -g $(OPTIONS_FLAGS)
-SRCS = mem.c string.c printf.c elf.c elf32.c elf64.c loader.c sbi.c sbi.c
+SRCS = mem.c string.c printf.c elf.c elf32.c elf64.c loader.c mm.c sbi.c sbi.c vm.c
 ASM_SRCS = loader.S
 LOADER = loader
 LOADER_BIN = loader.bin

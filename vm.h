@@ -14,16 +14,6 @@ static inline uintptr_t satp_new(uintptr_t pa)
   return (SATP_MODE | (pa >> RISCV_PAGE_BITS));
 }
 
-static inline uintptr_t __va(uintptr_t pa)
-{
-  return (pa - load_pa_start) + EYRIE_LOAD_START;
-}
-
-static inline uintptr_t __pa(uintptr_t va)
-{
-  return (va - EYRIE_LOAD_START) + load_pa_start;
-}
-
 static inline pte pte_create(uintptr_t ppn, int type)
 {
   return (pte)((ppn << PTE_PPN_SHIFT) | PTE_V | (type & PTE_FLAG_MASK) );
