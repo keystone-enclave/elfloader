@@ -14,7 +14,7 @@
 /* ELF header functions */
 int
 elf_newFile(void* file, size_t size, elf_t* res) {
-  printf("Creating new elf file struct");
+  printf("Creating new elf file struct\n");
 
   return elf_newFile_maybe_unsafe(file, size, true, true, res);
 }

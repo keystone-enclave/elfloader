@@ -85,14 +85,15 @@ int test(int i) {
 }
 
 void initializeFreeList(uintptr_t freeMemBase, uintptr_t dramBase, size_t dramSize) {
-  printf("Initializing free list");
+  printf("Initializing free list\n");
   freeList = freeMemBase;
   epmBase = dramBase; 
   epmSize = dramSize;
+  printf("Finished initializing free list\n");
 }
 
 int loadElf(elf_t* elf) {
-  printf("Loading elf");
+  printf("Loading elf\n");
 
   for (unsigned int i = 0; i < elf_getNumProgramHeaders(elf); i++) {
     if (elf_getProgramHeaderType(elf, i) != PT_LOAD) {
@@ -105,6 +106,7 @@ int loadElf(elf_t* elf) {
     char* src            = (char*)(elf_getProgramSegment(elf, i));
     uintptr_t va         = start;
 
+    printf("Loading initialized segment for program header %d\n", i);
     /* first load all pages that do not include .bss segment */
     while (va + RISCV_PAGE_SIZE <= file_end) {
       if (!mapPage(va, (uintptr_t)src))
@@ -123,6 +125,7 @@ int loadElf(elf_t* elf) {
       va += RISCV_PAGE_SIZE;
     }
 
+    printf("Loading .bss segment for program header %d\n", i);
     /* finally, load the remaining .bss segments */
     while (va < memory_end) {
       if (!allocPage(va, (uintptr_t) NULL))
@@ -139,5 +142,6 @@ int loadElf(elf_t* elf) {
 /* Loader is for Sv39 */
 uintptr_t satp_new(uintptr_t pa)
 {
+  printf("Create new satp\n");
   return (SATP_MODE | (pa >> RISCV_PAGE_BITS));
 }

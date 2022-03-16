@@ -8,7 +8,6 @@
 extern uintptr_t runtime_va_start;
 extern uintptr_t load_pa_start;
 
-extern uintptr_t satp_new(uintptr_t pa);
 
 static inline pte pte_create(uintptr_t ppn, int type)
 {
