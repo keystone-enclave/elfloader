@@ -1,5 +1,8 @@
+#include "csr.h"
+
 #define SBI_EXT_EXPERIMENTAL_KEYSTONE_ENCLAVE 0x08424b45
 #define SBI_SM_EXIT_ENCLAVE      3006
+#define RUNTIME_ADDRESS 0xfc0000000 // TODO: check if this fits in immediate for 
 
 .section .text
 _start:
@@ -46,12 +49,22 @@ _start:
   mv a2, sp
   call elf_newFile
   
-  // call load elf 
+  // call load elf to map runtime
   mv a0, sp
   call loadElf 
 
   // exit if errors
   blt a0, x0, exit
+
+  // switch to va and jump to runtime code 
+  li t0, RUNTIME_ADDRESS 
+  csrw stvec, t0  // store runtime start addresss in stvec 
+
+  la a0, root_page_table 
+  call satp_new // construct new satp
+
+  csrw satp, a0 // switch to virtual addresssing 
+
 
 exit: // exit enclave
   li a7, SBI_EXT_EXPERIMENTAL_KEYSTONE_ENCLAVE

@@ -8,11 +8,7 @@
 extern uintptr_t runtime_va_start;
 extern uintptr_t load_pa_start;
 
-/* Loader is for Sv39 */
-static inline uintptr_t satp_new(uintptr_t pa)
-{
-  return (SATP_MODE | (pa >> RISCV_PAGE_BITS));
-}
+extern uintptr_t satp_new(uintptr_t pa);
 
 static inline pte pte_create(uintptr_t ppn, int type)
 {
