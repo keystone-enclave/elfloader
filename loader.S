@@ -2,7 +2,7 @@
 
 #define SBI_EXT_EXPERIMENTAL_KEYSTONE_ENCLAVE 0x08424b45
 #define SBI_SM_EXIT_ENCLAVE      3006
-#define RUNTIME_ADDRESS 0xfc0000000 // TODO: check if this fits in immediate for 
+#define RUNTIME_ADDRESS 0xc0000 // TODO: check if this fits in immediate for 
 
 .section .text
 _start:
@@ -57,10 +57,11 @@ _start:
   blt a0, x0, exit
 
   // switch to va and jump to runtime code 
+  # lui t0, RUNTIME_ADDRESS
   li t0, RUNTIME_ADDRESS 
   csrw stvec, t0  // store runtime start addresss in stvec 
 
-  la a0, root_page_table 
+  la a0, root_page_table  // TODO: should this be la or li? 
   call satp_new // construct new satp
 
   csrw satp, a0 // switch to virtual addresssing 

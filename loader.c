@@ -85,12 +85,15 @@ int test(int i) {
 }
 
 void initializeFreeList(uintptr_t freeMemBase, uintptr_t dramBase, size_t dramSize) {
+  printf("Initializing free list");
   freeList = freeMemBase;
   epmBase = dramBase; 
   epmSize = dramSize;
 }
 
 int loadElf(elf_t* elf) {
+  printf("Loading elf");
+
   for (unsigned int i = 0; i < elf_getNumProgramHeaders(elf); i++) {
     if (elf_getProgramHeaderType(elf, i) != PT_LOAD) {
       continue;
