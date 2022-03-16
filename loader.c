@@ -87,7 +87,9 @@ int test(int i) {
 void initializeFreeList(uintptr_t freeMemBase, uintptr_t dramBase, size_t dramSize) {
   printf("Initializing free list\n");
   freeList = freeMemBase;
-  epmBase = dramBase; 
+  printf("freemem");
+  epmBase = dramBase;
+  printf("epmbase"); 
   epmSize = dramSize;
   printf("Finished initializing free list\n");
 }
