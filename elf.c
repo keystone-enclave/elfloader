@@ -9,6 +9,7 @@
 #include "elf64.h"
 #include "mem.h"
 #include "string.h"
+#include "printf.h"
 
 /* ELF header functions */
 int
