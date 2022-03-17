@@ -45,7 +45,7 @@ _start:
 
   // validate runtime  
   ld a3, 8(sp) // set a3 to runtime_base
-  blt a3, x0, exit // check that pointer is greater than zero
+  bne a3, x0, exit // check that pointer is not null
   ld a4, 12(sp) // set a4 to user_base
   sub t0, a4, a3 
   blt t0, x0, exit // check file size is greater than zero 
