@@ -4,6 +4,18 @@
 #define SBI_SM_EXIT_ENCLAVE      3006
 #define RUNTIME_ADDRESS 0xffffffffc0000000 
 
+#if __riscv_xlen == 64
+#define STORE sd
+#define LOAD ld
+#define LOG_REGBYTES  3
+#define WORD .dword
+#elif __riscv_xlen == 32
+#define STORE sw
+#define LOAD lw
+#define LOG_REGBYTES  2
+#define WORD .word
+#endif
+
 .section .text
 _start:
   // a1: dram_base
@@ -21,13 +33,13 @@ _start:
 
   // save all args to stack 
   addi sp, sp, -28
-  sw a1, 0(sp)
-  sw a2, 4(sp)
-  sw a3, 8(sp)
-  sw a4, 12(sp)
-  sw a5, 16(sp)
-  sw a6, 20(sp)
-  sw a7, 24(sp)
+  STORE a1, 0(sp)
+  STORE a2, 4(sp)
+  STORE a3, 8(sp)
+  STORE a4, 12(sp)
+  STORE a5, 16(sp)
+  STORE a6, 20(sp)
+  STORE a7, 24(sp)
 
   # // test function
   # li a0, 5
@@ -44,9 +56,9 @@ _start:
   call initializeFreeList  
 
   // validate runtime  
-  ld a3, 8(sp) // set a3 to runtime_base
-  bne a3, x0, exit // check that pointer is not null
-  ld a4, 12(sp) // set a4 to user_base
+  LOAD a3, 8(sp) // set a3 to runtime_base
+  beq a3, x0, exit // check that pointer is not null
+  LOAD a4, 12(sp) // set a4 to user_base
   sub t0, a4, a3 
   blt t0, x0, exit // check file size is greater than zero 
 
