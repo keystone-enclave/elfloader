@@ -33,13 +33,13 @@ _start:
 
   // save all args to stack 
   addi sp, sp, -28
-  STORE a1, 0(sp)
-  STORE a2, 4(sp)
-  STORE a3, 8(sp)
-  STORE a4, 12(sp)
-  STORE a5, 16(sp)
-  STORE a6, 20(sp)
-  STORE a7, 24(sp)
+  sw a1, 0(sp)
+  sw a2, 4(sp)
+  sw a3, 8(sp)
+  sw a4, 12(sp)
+  sw a5, 16(sp)
+  sw a6, 20(sp)
+  sw a7, 24(sp)
 
   # // test function
   # li a0, 5
@@ -56,9 +56,9 @@ _start:
   call initializeFreeList  
 
   // validate runtime  
-  LOAD a3, 8(sp) // set a3 to runtime_base
+  lw a3, 8(sp) // set a3 to runtime_base
   beq a3, x0, exit // check that pointer is not null
-  LOAD a4, 12(sp) // set a4 to user_base
+  lw a4, 12(sp) // set a4 to user_base
   sub t0, a4, a3 
   blt t0, x0, exit // check file size is greater than zero 
 
