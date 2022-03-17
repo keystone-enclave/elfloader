@@ -10,7 +10,7 @@ ELF_OBJCOPY = $(ELF_CROSS_COMPILE)objcopy
 #   $(error KEYSTONE_SDK_DIR is undefined)
 # endif
 
-CFLAGS = -Wall -Werror -fPIC -fno-builtin -nostdlib -g -mcmodel=medany $(OPTIONS_FLAGS)
+CFLAGS = -Wall -Werror -fno-builtin -nostdlib -g -mcmodel=medany $(OPTIONS_FLAGS)
 SRCS = mem.c string.c printf.c elf.c elf32.c elf64.c loader.c mm.c sbi.c sbi.c vm.c
 ASM_SRCS = loader.S
 LOADER = loader
