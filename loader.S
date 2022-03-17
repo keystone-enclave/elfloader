@@ -2,7 +2,7 @@
 
 #define SBI_EXT_EXPERIMENTAL_KEYSTONE_ENCLAVE 0x08424b45
 #define SBI_SM_EXIT_ENCLAVE      3006
-#define RUNTIME_ADDRESS 0xc0000 // TODO: check if this fits in immediate for 
+#define RUNTIME_ADDRESS 0xffffffffc0000000 
 
 .section .text
 _start:
@@ -35,6 +35,12 @@ _start:
 
   // set the free memory
   mv a0, a5 // a1, a2 already dram_base and dram_size
+  la a3, freeList 
+  add a3, a3, a1 
+  la a4, epmBase 
+  add a4, a4, a1 
+  la a5, epmSize 
+  add a5, a5, a1 
   call initializeFreeList  
 
   // validate runtime  
@@ -57,7 +63,6 @@ _start:
   blt a0, x0, exit
 
   // switch to va and jump to runtime code 
-  # lui t0, RUNTIME_ADDRESS
   li t0, RUNTIME_ADDRESS 
   csrw stvec, t0  // store runtime start addresss in stvec 
 

@@ -84,13 +84,22 @@ int test(int i) {
   return i + 1; 
 }
 
-void initializeFreeList(uintptr_t freeMemBase, uintptr_t dramBase, size_t dramSize) {
+void initializeFreeList(uintptr_t freeMemBase, uintptr_t dramBase, size_t dramSize, 
+    uintptr_t* freeList, uintptr_t* epmBase, uintptr_t* epmSize) {
   printf("Initializing free list\n");
-  freeList = freeMemBase;
-  epmBase = dramBase; 
-  epmSize = dramSize;
+  *freeList = freeMemBase;
+  *epmBase = dramBase; 
+  *epmSize = dramSize;
   printf("Finished initializing free list\n");
 }
+
+// void initializeFreeList(uintptr_t freeMemBase, uintptr_t dramBase, size_t dramSize) {
+//   printf("Initializing free list\n");
+//   freeList = freeMemBase;
+//   epmBase = dramBase; 
+//   epmSize = dramSize;
+//   printf("Finished initializing free list\n");
+// }
 
 int loadElf(elf_t* elf) {
   printf("Loading elf\n");

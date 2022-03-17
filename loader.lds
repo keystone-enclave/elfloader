@@ -7,12 +7,11 @@ STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0100; /* 4 pages */
 
 SECTIONS
 {
-  
   .text :
   {
     PROVIDE( _start = . );
-    *(._start)
-    *(*)
+    *(._start);
+    *(*);
 
     /* 
     * Only text section is copied into final loader binary 
