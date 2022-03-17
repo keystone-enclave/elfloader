@@ -44,7 +44,9 @@ _start:
   call initializeFreeList  
 
   // validate runtime  
+  ld a3, 8(sp) // set a3 to runtime_base
   blt a3, x0, exit // check that pointer is greater than zero
+  ld a4, 12(sp) // set a4 to user_base
   sub t0, a4, a3 
   blt t0, x0, exit // check file size is greater than zero 
 
@@ -66,7 +68,7 @@ _start:
   li t0, RUNTIME_ADDRESS 
   csrw stvec, t0  // store runtime start addresss in stvec 
 
-  la a0, root_page_table  // TODO: should this be la or li? 
+  la a0, root_page_table  
   call satp_new // construct new satp
 
   csrw satp, a0 // switch to virtual addresssing 
