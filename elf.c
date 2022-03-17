@@ -24,11 +24,13 @@ elf_newFile_maybe_unsafe(
     void* file, size_t size, bool check_pht, bool check_st, elf_t* res) {
   elf_t new_file = {.elfFile = file, .elfSize = size};
 
+  printf("Check elf file\n");
   int status = elf_checkFile(&new_file);
   if (status < 0) {
     return status;
   }
 
+  printf("Check program header\n");
   if (check_pht) {
     status = elf_checkProgramHeaderTable(&new_file);
     if (status < 0) {
@@ -36,6 +38,7 @@ elf_newFile_maybe_unsafe(
     }
   }
 
+  printf("Check section table\n");
   if (check_st) {
     status = elf_checkSectionTable(&new_file);
     if (status < 0) {
@@ -43,6 +46,7 @@ elf_newFile_maybe_unsafe(
     }
   }
 
+  printf("Finished validating elf\n");
   if (res) {
     *res = new_file;
   }
