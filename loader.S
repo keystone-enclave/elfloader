@@ -17,7 +17,7 @@ _start:
 
   // sp <- stack_addr + dram_base (a1)
   la sp, _estack
-  add sp, sp, a1
+  # add sp, sp, a1
 
   // save all args to stack 
   addi sp, sp, -28
