@@ -73,11 +73,13 @@ elf_checkFile(elf_t* elfFile) {
   if (res == 0) {
     return 0;
   }
+  printf("Check elf file 32\n");
 
   res = elf64_checkFile(elfFile);
   if (res == 0) {
     return 0;
   }
+  printf("Check elf file 64\n");
 
   return -1;
 }
