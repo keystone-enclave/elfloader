@@ -163,7 +163,7 @@ int load_runtime(uintptr_t dram_base, uintptr_t dram_size,
 
   // create runtime elf struct
   elf_t runtime_elf;
-  ret = elf_newFile(runtime_base, runtime_size, &runtime_elf);
+  ret = elf_newFile((void*) runtime_base, runtime_size, &runtime_elf);
   if (ret < 0) {
     return ret;
   }
