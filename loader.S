@@ -41,40 +41,45 @@ _start:
   sw a6, 20(sp)
   sw a7, 24(sp)
 
+
   # // test function
   # li a0, 5
   # call test
 
-  // set the free memory
-  mv a0, a5 // a1, a2 already dram_base and dram_size
-  la a3, freeList 
-  add a3, a3, a1 
-  la a4, epmBase 
-  add a4, a4, a1 
-  la a5, epmSize 
-  add a5, a5, a1 
-  call initializeFreeList  
+  # // set the free memory
+  # mv a0, a5 // a1, a2 already dram_base and dram_size
+  # call initializeFreeList  
 
-  // validate runtime  
-  lw a3, 8(sp) // set a3 to runtime_base
-  beq a3, x0, exit // check that pointer is not null
-  lw a4, 12(sp) // set a4 to user_base
-  sub t0, a4, a3 
-  blt t0, x0, exit // check file size is greater than zero 
+  # // validate runtime  
+  # lw a3, 8(sp) // set a3 to runtime_base
+  # beq a3, x0, exit // check that pointer is not null
+  # lw a4, 12(sp) // set a4 to user_base
+  # sub t0, a4, a3 
+  # blt t0, x0, exit // check file size is greater than zero 
 
-  // call elf_newFile 
-  mv a0, a3 
-  mv a1, t0 
-  addi sp, sp, -12
-  mv a2, sp
-  call elf_newFile
+  # // call elf_newFile 
+  # mv a0, a3 
+  # mv a1, t0 
+  # addi sp, sp, -12 // TODO: check this 
+  # mv a2, sp
+  # call elf_newFile
   
-  // call load elf to map runtime
-  mv a0, sp
-  call loadElf 
+  # // call load elf to map runtime
+  # mv a0, sp
+  # call loadElf 
 
-  // exit if errors
-  blt a0, x0, exit
+  # // exit if errors
+  # blt a0, x0, exit
+
+  // call load_runtime
+  mv a0, a1
+  mv a1, a2 
+  mv a2, a3 
+  mv a3, a4 
+  mv a4, a5
+  mv a5, a6 
+  mv a6, a7
+  call load_runtime 
 
   // switch to va and jump to runtime code 
   li t0, RUNTIME_ADDRESS 

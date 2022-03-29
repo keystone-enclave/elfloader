@@ -84,15 +84,6 @@ int test(int i) {
   return i + 1; 
 }
 
-// void initializeFreeList(uintptr_t freeMemBase, uintptr_t dramBase, size_t dramSize, 
-//     uintptr_t* freeList, uintptr_t* epmBase, uintptr_t* epmSize) {
-//   printf("Initializing free list\n");
-//   *freeList = freeMemBase;
-//   *epmBase = dramBase; 
-//   *epmSize = dramSize;
-//   printf("Finished initializing free list\n");
-// }
-
 void initializeFreeList(uintptr_t freeMemBase, uintptr_t dramBase, size_t dramSize) {
   printf("Initializing free list\n");
   freeList = freeMemBase;
@@ -153,4 +144,31 @@ uintptr_t satp_new(uintptr_t pa)
 {
   printf("Create new satp\n");
   return (SATP_MODE | (pa >> RISCV_PAGE_BITS));
+}
+
+int load_runtime(uintptr_t dram_base, uintptr_t dram_size, 
+                      uintptr_t runtime_base, uintptr_t user_base, 
+                      uintptr_t free_base, uintptr_t untrusted_ptr, 
+                      uintptr_t untrusted_size) {
+  int ret = 0;
+
+  // initialize free list
+  initializeFreeList(free_base, dram_base, dram_size);
+
+  // validate runtime elf 
+  size_t runtime_size = user_base - runtime_base;
+  if (((void*) runtime_base == NULL) || (runtime_size <= 0)) {
+    return -1; 
+  }
+
+  // create runtime elf struct
+  elf_t runtime_elf;
+  ret = elf_newFile(runtime_base, runtime_size, &runtime_elf);
+  if (ret < 0) {
+    return ret;
+  }
+
+  // map runtime memory
+  ret = loadElf(&runtime_elf);
+  return ret;
 }
