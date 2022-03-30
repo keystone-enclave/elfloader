@@ -117,9 +117,9 @@ mapPage(uintptr_t va, uintptr_t pa) {
     return -1;
   }
 
-  uintptr_t ppn = pa >> RISCV_PAGE_BITS;
+  uintptr_t phys_page_num = ppn(pa);
 
-  *pte = pte_create(ppn, PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V);
+  *pte = pte_create(phys_page_num, PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V);
   return 1;
 }
 
@@ -137,12 +137,13 @@ allocPage(uintptr_t va, uintptr_t src) {
 
   /* otherwise, allocate one from EPM freeList */
   page_addr = get_new_page();
+  uintptr_t phys_page_num = ppn(page_addr);
 
-  *pte = pte_create(page_addr, PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V);
+  *pte = pte_create(phys_page_num, PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V);
   if (src != (uintptr_t) NULL) {
-    memcpy((void*) (page_addr << RISCV_PAGE_BITS), (void*) src, RISCV_PAGE_SIZE);
+    memcpy((void*) page_addr, (void*) src, RISCV_PAGE_SIZE);
   } else {
-    memset((void*) (page_addr << RISCV_PAGE_BITS), 0, RISCV_PAGE_SIZE);
+    memset((void*) page_addr, 0, RISCV_PAGE_SIZE);
   }
   return 1;
 }

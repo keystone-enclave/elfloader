@@ -96,6 +96,7 @@ int loadElf(elf_t* elf) {
   printf("Loading elf\n");
 
   for (unsigned int i = 0; i < elf_getNumProgramHeaders(elf); i++) {
+    printf("loading %dth program header", i);
     if (elf_getProgramHeaderType(elf, i) != PT_LOAD) {
       continue;
     }

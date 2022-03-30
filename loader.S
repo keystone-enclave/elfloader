@@ -81,6 +81,9 @@ _start:
   mv a6, a7
   call load_runtime 
 
+  // exit if errors
+  blt a0, x0, exit
+
   // switch to va and jump to runtime code 
   li t0, RUNTIME_ADDRESS 
   csrw stvec, t0  // store runtime start addresss in stvec 
