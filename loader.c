@@ -96,7 +96,7 @@ int loadElf(elf_t* elf) {
   printf("Loading elf\n");
 
   for (unsigned int i = 0; i < elf_getNumProgramHeaders(elf); i++) {
-    printf("loading %dth program header", i);
+    printf("loading %dth program header\n", i);
     if (elf_getProgramHeaderType(elf, i) != PT_LOAD) {
       continue;
     }
@@ -147,10 +147,11 @@ uintptr_t satp_new(uintptr_t pa)
   return (SATP_MODE | (pa >> RISCV_PAGE_BITS));
 }
 
-int load_runtime(uintptr_t dram_base, uintptr_t dram_size, 
-                      uintptr_t runtime_base, uintptr_t user_base, 
-                      uintptr_t free_base, uintptr_t untrusted_ptr, 
-                      uintptr_t untrusted_size) {
+int load_runtime(uintptr_t dummy,
+                uintptr_t dram_base, uintptr_t dram_size, 
+                uintptr_t runtime_base, uintptr_t user_base, 
+                uintptr_t free_base, uintptr_t untrusted_ptr, 
+                uintptr_t untrusted_size) {
   int ret = 0;
 
   // initialize free list

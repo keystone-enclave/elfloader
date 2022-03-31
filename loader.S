@@ -41,44 +41,7 @@ _start:
   sw a6, 20(sp)
   sw a7, 24(sp)
 
-
-  # // test function
-  # li a0, 5
-  # call test
-
-  # // set the free memory
-  # mv a0, a5 // a1, a2 already dram_base and dram_size
-  # call initializeFreeList  
-
-  # // validate runtime  
-  # lw a3, 8(sp) // set a3 to runtime_base
-  # beq a3, x0, exit // check that pointer is not null
-  # lw a4, 12(sp) // set a4 to user_base
-  # sub t0, a4, a3 
-  # blt t0, x0, exit // check file size is greater than zero 
-
-  # // call elf_newFile 
-  # mv a0, a3 
-  # mv a1, t0 
-  # addi sp, sp, -12 // TODO: check this 
-  # mv a2, sp
-  # call elf_newFile
-  
-  # // call load elf to map runtime
-  # mv a0, sp
-  # call loadElf 
-
-  # // exit if errors
-  # blt a0, x0, exit
-
   // call load_runtime
-  mv a0, a1
-  mv a1, a2 
-  mv a2, a3 
-  mv a3, a4 
-  mv a4, a5
-  mv a5, a6 
-  mv a6, a7
   call load_runtime 
 
   // exit if errors
@@ -90,6 +53,15 @@ _start:
 
   la a0, root_page_table  
   call satp_new // construct new satp
+
+  // set arguments for eyrie_boot
+  lw a1, 0(sp)
+  lw a2, 4(sp)
+  lw a3, 8(sp)
+  lw a4, 12(sp)
+  lw a5, 16(sp)
+  lw a6, 20(sp)
+  lw a7, 24(sp)
 
   csrw satp, a0 // switch to virtual addresssing 
 
