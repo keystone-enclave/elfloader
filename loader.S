@@ -63,6 +63,7 @@ _start:
   lw a6, 20(sp)
   lw a7, 24(sp)
 
+  sfence.vma
   csrw satp, a0 // switch to virtual addresssing 
 
 
