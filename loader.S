@@ -45,7 +45,7 @@ _start:
   call load_runtime 
 
   // exit if errors
-  blt a0, x0, exit
+  # blt a0, x0, exit
 
   // switch to va and jump to runtime code 
   li t0, RUNTIME_ADDRESS 
@@ -65,12 +65,7 @@ _start:
 
   sfence.vma
   csrw satp, a0 // switch to virtual addresssing 
-
-
-exit: // exit enclave
-  li a7, SBI_EXT_EXPERIMENTAL_KEYSTONE_ENCLAVE
-  li a6, SBI_SM_EXIT_ENCLAVE
-  ecall
+  sfence.vma
   
 _sstack:
   .dword 1
