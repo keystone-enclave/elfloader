@@ -16,6 +16,8 @@
 #define WORD .word
 #endif
 
+#define REGBYTES (1<<LOG_REGBYTES)
+
 .section .text
 _start:
   // a1: dram_base
@@ -32,14 +34,14 @@ _start:
   # add sp, sp, a1
 
   // save all args to stack 
-  addi sp, sp, -28
-  sw a1, 0(sp)
-  sw a2, 4(sp)
-  sw a3, 8(sp)
-  sw a4, 12(sp)
-  sw a5, 16(sp)
-  sw a6, 20(sp)
-  sw a7, 24(sp)
+  addi sp, sp, -(REGBYTES*7)
+  STORE a1, 0(sp)
+  STORE a2, 4(sp)
+  STORE a3, 8(sp)
+  STORE a4, 12(sp)
+  STORE a5, 16(sp)
+  STORE a6, 20(sp)
+  STORE a7, 24(sp)
 
   // call load_runtime
   call load_runtime 
@@ -55,13 +57,13 @@ _start:
   call satp_new // construct new satp
 
   // set arguments for eyrie_boot
-  lw a1, 0(sp)
-  lw a2, 4(sp)
-  lw a3, 8(sp)
-  lw a4, 12(sp)
-  lw a5, 16(sp)
-  lw a6, 20(sp)
-  lw a7, 24(sp)
+  LOAD a1, 0(sp)
+  LOAD a2, 4(sp)
+  LOAD a3, 8(sp)
+  LOAD a4, 12(sp)
+  LOAD a5, 16(sp)
+  LOAD a6, 20(sp)
+  LOAD a7, 24(sp)
 
   sfence.vma
   csrw satp, a0 // switch to virtual addresssing 
