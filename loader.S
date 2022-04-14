@@ -36,12 +36,12 @@ _start:
   // save all args to stack 
   addi sp, sp, -(REGBYTES*7)
   STORE a1, 0(sp)
-  STORE a2, 4(sp)
-  STORE a3, 8(sp)
-  STORE a4, 12(sp)
-  STORE a5, 16(sp)
-  STORE a6, 20(sp)
-  STORE a7, 24(sp)
+  STORE a2, 1*REGBYTES(sp)
+  STORE a3, 2*REGBYTES(sp)
+  STORE a4, 3*REGBYTES(sp)
+  STORE a5, 4*REGBYTES(sp)
+  STORE a6, 5*REGBYTES(sp)
+  STORE a7, 6*REGBYTES(sp)
 
   // call load_runtime
   call load_runtime 
@@ -58,12 +58,12 @@ _start:
 
   // set arguments for eyrie_boot
   LOAD a1, 0(sp)
-  LOAD a2, 4(sp)
-  LOAD a3, 8(sp)
-  LOAD a4, 12(sp)
-  LOAD a5, 16(sp)
-  LOAD a6, 20(sp)
-  LOAD a7, 24(sp)
+  LOAD a2, 1*REGBYTES(sp)
+  LOAD a3, 2*REGBYTES(sp)
+  LOAD a4, 3*REGBYTES(sp)
+  LOAD a5, 4*REGBYTES(sp)
+  LOAD a6, 5*REGBYTES(sp)
+  LOAD a7, 6*REGBYTES(sp)
 
   sfence.vma
   csrw satp, a0 // switch to virtual addresssing 
