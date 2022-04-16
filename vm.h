@@ -42,8 +42,5 @@ static inline uintptr_t pte_ppn(pte pte)
 
 /* root page table */
 extern pte root_page_table[];
-/* page tables for loading physical memory */
-extern pte load_l2_page_table[];
-extern pte load_l3_page_table[];
 
 #endif

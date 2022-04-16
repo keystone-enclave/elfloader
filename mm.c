@@ -7,48 +7,6 @@ uintptr_t freeList;
 uintptr_t epmBase; 
 size_t epmSize;
 
-// /* Page table utilities */
-// pte* __ept_walk_create(uintptr_t addr);
-// pte* __ept_continue_walk_create(uintptr_t addr, pte* pte);
-// pte* __ept_walk_internal(uintptr_t addr, int create);
-// pte* __ept_walk(uintptr_t addr);
-
-// pte*
-// __ept_walk_create(uintptr_t addr) {
-//   return __ept_walk_internal(addr, 1);
-// }
-
-// pte*
-// __ept_continue_walk_create(uintptr_t addr, pte* pte) {
-//   uint64_t free_ppn = ppn(freeList);
-//   *pte              = ptd_create(free_ppn);
-//   freeList += RISCV_PAGE_SIZE;
-//   return __ept_walk_create(addr);
-// }
-
-// pte*
-// __ept_walk_internal(uintptr_t addr, int create) {
-//   pte* t = (pte*)(root_page_table);
-
-//   int i;
-//   for (i = (VA_BITS - RISCV_PAGE_BITS) / RISCV_PT_INDEX_BITS - 1; i > 0; i--) {
-//     size_t idx = RISCV_GET_PT_INDEX(addr, i);
-//     if (!(t[idx]) & PTE_V) {
-//       return create ? __ept_continue_walk_create(addr, &t[idx]) : 0;
-//     }
-
-//     t = (pte*)(readMem(
-//         (uintptr_t)(pte_ppn(t[idx]) << RISCV_PAGE_BITS),
-//         RISCV_PAGE_SIZE));
-//   }
-//   return &t[RISCV_GET_PT_INDEX(addr, 0)];
-// }
-
-// pte*
-// __ept_walk(uintptr_t addr) {
-//   return __ept_walk_internal(addr, 0);
-// }
-
 /* Page table utilities */
 static pte*
 __walk_create(pte* root, uintptr_t addr);
