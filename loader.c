@@ -4,6 +4,7 @@
 #include "mm.h"
 #include "mem.h"
 #include "printf.h"
+#include "common.h"
 
 /* For Debugging Use Only */
 // static int print_pgtable(int level, pte* tb, uintptr_t vaddr)
@@ -147,6 +148,20 @@ uintptr_t satp_new(uintptr_t pa)
   return (SATP_MODE | (pa >> RISCV_PAGE_BITS));
 }
 
+void
+map_physical_memory(uintptr_t dram_base,
+                    uintptr_t dram_size)
+{
+  printf("Mapping physical memory");
+  uintptr_t ptr = EYRIE_LOAD_START;
+  /* load address should not override kernel address */
+  assert(RISCV_GET_PT_INDEX(ptr, 1) != RISCV_GET_PT_INDEX(RUNTIME_VA_START, 1));
+  map_with_reserved_page_table(dram_base, dram_size,
+      ptr, load_l2_page_table, load_l3_page_table);
+}
+
+
+
 int load_runtime(uintptr_t dummy,
                 uintptr_t dram_base, uintptr_t dram_size, 
                 uintptr_t runtime_base, uintptr_t user_base, 
@@ -172,5 +187,12 @@ int load_runtime(uintptr_t dummy,
 
   // map runtime memory
   ret = loadElf(&runtime_elf);
+  if (ret < 0) {
+    return ret;
+  }
+
+  // map enclave physical memory, so that runtime will be able to access all memory
+  map_physical_memory(dram_base, dram_size);
+
   return ret;
 }

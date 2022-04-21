@@ -1,7 +1,7 @@
 #include "mm.h"
-#include "vm_defs.h"
 #include "vm.h"
 #include "mem.h"
+#include "common.h"
 
 uintptr_t freeList; 
 uintptr_t epmBase; 
@@ -127,4 +127,104 @@ epm_va_to_pa(uintptr_t addr) {
     return pte_ppn(*pte) << RISCV_PAGE_BITS;
   else
     return 0;
+}
+
+void
+__map_with_reserved_page_table_32(uintptr_t dram_base,
+                               uintptr_t dram_size,
+                               uintptr_t ptr,
+                               pte* l2_pt)
+{
+  uintptr_t offset = 0;
+  uintptr_t leaf_level = 2;
+  pte* leaf_pt = l2_pt;
+  unsigned long dram_max =  RISCV_GET_LVL_PGSIZE(leaf_level - 1);
+
+  /* use megapage if l2_pt is null */
+  if (!l2_pt) {
+    leaf_level = 1;
+    leaf_pt = root_page_table;
+    dram_max = -1UL; 
+  }
+
+  assert(dram_size <= dram_max);
+  assert(IS_ALIGNED(dram_base, RISCV_GET_LVL_PGSIZE_BITS(leaf_level)));
+  assert(IS_ALIGNED(ptr, RISCV_GET_LVL_PGSIZE_BITS(leaf_level - 1)));
+
+  if(l2_pt) {
+       /* set root page table entry */
+       root_page_table[RISCV_GET_PT_INDEX(ptr, 1)] =
+       ptd_create(ppn((uintptr_t) l2_pt));
+  }
+
+  for (offset = 0;
+       offset < dram_size;
+       offset += RISCV_GET_LVL_PGSIZE(leaf_level))
+  {
+        leaf_pt[RISCV_GET_PT_INDEX(ptr + offset, leaf_level)] =
+        pte_create(ppn(dram_base + offset),
+                 PTE_R | PTE_W | PTE_X | PTE_A | PTE_D);
+  }
+
+}
+
+void
+__map_with_reserved_page_table_64(uintptr_t dram_base,
+                               uintptr_t dram_size,
+                               uintptr_t ptr,
+                               pte* l2_pt,
+                               pte* l3_pt)
+{
+  uintptr_t offset = 0;
+  uintptr_t leaf_level = 3;
+  pte* leaf_pt = l3_pt;
+  /* use megapage if l3_pt is null */
+  if (!l3_pt) {
+    leaf_level = 2;
+    leaf_pt = l2_pt;
+  }
+  assert(dram_size <= RISCV_GET_LVL_PGSIZE(leaf_level - 1));
+  assert(IS_ALIGNED(dram_base, RISCV_GET_LVL_PGSIZE_BITS(leaf_level)));
+  assert(IS_ALIGNED(ptr, RISCV_GET_LVL_PGSIZE_BITS(leaf_level - 1)));
+
+  /* set root page table entry */
+  root_page_table[RISCV_GET_PT_INDEX(ptr, 1)] =
+    ptd_create(ppn((uintptr_t) l2_pt));
+
+  /* set L2 if it's not leaf */
+  if (leaf_pt != l2_pt) {
+    l2_pt[RISCV_GET_PT_INDEX(ptr, 2)] =
+      ptd_create(ppn((uintptr_t) l3_pt));
+  }
+
+  /* set leaf level */
+  for (offset = 0;
+       offset < dram_size;
+       offset += RISCV_GET_LVL_PGSIZE(leaf_level))
+  {
+    leaf_pt[RISCV_GET_PT_INDEX(ptr + offset, leaf_level)] =
+      pte_create(ppn(dram_base + offset),
+          PTE_R | PTE_W | PTE_X | PTE_A | PTE_D);
+  }
+
+}
+
+void
+map_with_reserved_page_table(uintptr_t dram_base,
+                             uintptr_t dram_size,
+                             uintptr_t ptr,
+                             pte* l2_pt,
+                             pte* l3_pt)
+{
+  #if __riscv_xlen == 64
+  if (dram_size > RISCV_GET_LVL_PGSIZE(2))
+    __map_with_reserved_page_table_64(dram_base, dram_size, ptr, l2_pt, 0);
+  else
+    __map_with_reserved_page_table_64(dram_base, dram_size, ptr, l2_pt, l3_pt);
+  #elif __riscv_xlen == 32
+  if (dram_size > RISCV_GET_LVL_PGSIZE(1))
+    __map_with_reserved_page_table_32(dram_base, dram_size, ptr, 0);
+  else
+    __map_with_reserved_page_table_32(dram_base, dram_size, ptr, l2_pt);
+  #endif
 }

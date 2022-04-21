@@ -6,8 +6,23 @@
 #include "vm_defs.h"
 
 extern uintptr_t runtime_va_start;
-extern uintptr_t load_pa_start;
+// extern uintptr_t kernel_offset;
+// extern uintptr_t load_pa_start;
 
+// static inline uintptr_t kernel_va_to_pa(void* ptr)
+// {
+//   return (uintptr_t) ptr - kernel_offset;
+// }
+
+// static inline uintptr_t __va(uintptr_t pa)
+// {
+//   return (pa - load_pa_start) + EYRIE_LOAD_START;
+// }
+
+// static inline uintptr_t __pa(uintptr_t va)
+// {
+//   return (va - EYRIE_LOAD_START) + load_pa_start;
+// }
 
 static inline pte pte_create(uintptr_t ppn, int type)
 {
@@ -42,5 +57,8 @@ static inline uintptr_t pte_ppn(pte pte)
 
 /* root page table */
 extern pte root_page_table[];
+/* page tables for loading physical memory */
+extern pte load_l2_page_table[];
+extern pte load_l3_page_table[];
 
 #endif

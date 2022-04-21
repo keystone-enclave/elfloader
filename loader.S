@@ -2,7 +2,7 @@
 
 #define SBI_EXT_EXPERIMENTAL_KEYSTONE_ENCLAVE 0x08424b45
 #define SBI_SM_EXIT_ENCLAVE      3006
-#define RUNTIME_ADDRESS 0xffffffffc0000000 
+# define RUNTIME_VA_START 0xffffffffc0000000 
 
 #if __riscv_xlen == 64
 #define STORE sd
@@ -50,7 +50,7 @@ _start:
   # blt a0, x0, exit
 
   // switch to va and jump to runtime code 
-  li t0, RUNTIME_ADDRESS 
+  li t0, RUNTIME_VA_START
   csrw stvec, t0  // store runtime start addresss in stvec 
 
   la a0, root_page_table  
