@@ -44,7 +44,7 @@ _start:
   STORE a7, 6*REGBYTES(sp)
 
   csrr t0, sepc // user_entry previously written to sepc
-  addi sp, sp -REGBYTES 
+  addi sp, sp, -(REGBYTES) 
   STORE t0, (sp)
 
   // call load_runtime
