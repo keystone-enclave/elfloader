@@ -194,5 +194,17 @@ int load_runtime(uintptr_t dummy,
   // map enclave physical memory, so that runtime will be able to access all memory
   map_physical_memory(dram_base, dram_size);
 
+  // map untrusted memory
+  uintptr_t va        = EYRIE_UNTRUSTED_START;
+  uintptr_t untr_iter = untrusted_ptr;
+  while (va < EYRIE_UNTRUSTED_START + untrusted_size) {
+    if (!mapPage(EYRIE_UNTRUSTED_START, untr_iter)) {
+      //return Error::PageAllocationFailure;
+      return -1; //TODO: error class later
+    }
+    va += RISCV_PAGE_SIZE;
+    untr_iter += RISCV_PAGE_SIZE;
+  }
+
   return ret;
 }
