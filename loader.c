@@ -109,6 +109,22 @@ int loadElf(elf_t* elf) {
     uintptr_t va         = start;
 
     printf("Loading initialized segment for program header %d\n", i);
+    /* va is not page-aligned, so it doesn't own some of the page. Page may already be mapped. */
+    if (RISCV_PAGE_OFFSET(va)) {
+      if (RISCV_PAGE_OFFSET(va) != RISCV_PAGE_OFFSET((uintptr_t) src)) {
+        printf("[loader] loadElf: va and src are misaligned");
+        return -1;
+      }
+      uintptr_t new_page = allocPage(va, 0);
+      if (!new_page)
+        //return Error::PageAllocationFailure;asdf
+        return -1; //TODO: error class laterasdf
+      memcpy((void *) (new_page + RISCV_PAGE_OFFSET(va)), src, RISCV_PAGE_SIZE - RISCV_PAGE_OFFSET(va));
+      // TODO: is it safe to free the page?
+      va = PAGE_DOWN(va) + RISCV_PAGE_SIZE;
+      src = (char *) (PAGE_DOWN((uintptr_t) src) + RISCV_PAGE_SIZE);
+    }
+
     /* first load all pages that do not include .bss segment */
     while (va + RISCV_PAGE_SIZE <= file_end) {
       if (!mapPage(va, (uintptr_t)src))
@@ -118,21 +134,16 @@ int loadElf(elf_t* elf) {
       va += RISCV_PAGE_SIZE;
     }
 
-    /* next, load the page that has both initialized and uninitialized segments
-     */
-    if (va < file_end) {
-      if (!mapPage(va, (uintptr_t) src))
-        //return Error::PageAllocationFailure;
-        return -1; //TODO: error class later
-      va += RISCV_PAGE_SIZE;
-    }
-
-    printf("Loading .bss segment for program header %d\n", i);
-    /* finally, load the remaining .bss segments */
+    /* load the .bss segments */
     while (va < memory_end) {
-      if (!allocPage(va, (uintptr_t) NULL))
+      uintptr_t new_page = allocPage(va, 0);
+      if (!new_page)
         //return Error::PageAllocationFailure;
         return -1; //TODO: error class later
+      /* copy over non .bss part of the page if it's a part of the page */
+      if (va < file_end) {
+        memcpy((void*) new_page, src, file_end - va);
+      }
       va += RISCV_PAGE_SIZE;
     }
   }
@@ -198,7 +209,7 @@ int load_runtime(uintptr_t dummy,
   uintptr_t va        = EYRIE_UNTRUSTED_START;
   uintptr_t untr_iter = untrusted_ptr;
   while (va < EYRIE_UNTRUSTED_START + untrusted_size) {
-    if (!mapPage(EYRIE_UNTRUSTED_START, untr_iter)) {
+    if (!mapPage(va, untr_iter)) {
       //return Error::PageAllocationFailure;
       return -1; //TODO: error class later
     }

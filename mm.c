@@ -90,7 +90,7 @@ allocPage(uintptr_t va, uintptr_t src) {
 
   /* if the page has been already allocated, return the page */
   if (*pte & PTE_V) {
-    return 1;
+    return PAGE_DOWN(va);
   }
 
   /* otherwise, allocate one from EPM freeList */
@@ -103,7 +103,7 @@ allocPage(uintptr_t va, uintptr_t src) {
   } else {
     memset((void*) page_addr, 0, RISCV_PAGE_SIZE);
   }
-  return 1;
+  return page_addr;
 }
 
 /* This function pre-allocates the required page tables so that
