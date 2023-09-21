@@ -51,7 +51,7 @@ _start:
   call load_runtime 
 
   // exit if errors
-  # blt a0, x0, exit
+  blt a0, x0, exit
 
   // switch to va and jump to runtime code 
   li t0, RUNTIME_VA_START
@@ -72,6 +72,9 @@ _start:
   sfence.vma
   csrw satp, a0 // switch to virtual addresssing 
   sfence.vma
+
+exit:
+  call error_and_loop
   
 _sstack:
   .dword 1

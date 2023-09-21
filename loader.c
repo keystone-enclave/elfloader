@@ -219,3 +219,10 @@ int load_runtime(uintptr_t dummy,
 
   return ret;
 }
+
+void error_and_loop() {
+  printf("[loader] ran into error. looping infinitely...\n");
+  while(true) {
+    printf(".");
+  }
+}
