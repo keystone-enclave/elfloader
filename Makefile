@@ -51,4 +51,4 @@ obj/%.o: %.c $(OBJ_DIR_EXISTS)
 
 clean:
 	rm -rf obj 
-	rm $(LOADER) $(LOADER).bin
+	rm -f $(LOADER) $(LOADER).bin
