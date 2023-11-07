@@ -1,4 +1,4 @@
-CROSSCOMPILE = $(shell which riscv${KEYSTONE_BITS}-buildroot-linux-gnu-gcc | rev | cut -c 4- | rev)
+CROSSCOMPILE ?= $(shell which riscv${KEYSTONE_BITS}-buildroot-linux-gnu-gcc | rev | cut -c 4- | rev)
 CC = $(CROSSCOMPILE)gcc
 OBJCOPY = $(CROSSCOMPILE)objcopy
 
